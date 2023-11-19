@@ -18,6 +18,41 @@
 > - make install
 - Sau khi build xong sẽ có lib trong build/instal/lib/libncnn.a
 
+####### Install lib
+###################[install c++13 ARMv7]##################################
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt update
+sudo apt install gcc-13 g++-13 -y
+rm /usr/bin/gcc
+rm /usr/bin/g++
+ln -s /usr/bin/gcc-13 /usr/bin/gcc
+ln -s /usr/bin/g++-13 /usr/bin/g++
+######[check simlink gcc/g++]
+ls -la /usr/bin/ | grep gcc
+ls -la /usr/bin/ | grep g++
+######[check version gcc/g++
+gcc -v
+g++ -v
+
+###################[install SSL & MQTT ARMv7]##################################
+<!-- sudo apt-get install build-essential gcc make cmake cmake-gui cmake-curses-gui git doxygen graphviz libssl-dev
+git clone https://github.com/eclipse/paho.mqtt.c.git
+cd paho.mqtt.c
+git checkout 1.4
+cmake -Bbuild -H. -DPAHO_WITH_SSL=ON
+sudo cmake --build build/ -j4 --target install
+sudo ldconfig
+cd ..
+git clone https://github.com/eclipse/paho.mqtt.cpp
+cd paho.mqtt.cpp
+cmake -Bbuild -H. -DPAHO_BUILD_DOCUMENTATION=TRUE -DPAHO_BUILD_SAMPLES=TRUE
+sudo cmake --build build/ -j4 --target install
+
+######[build code mqtt]
+g++ -o mqtt_example testMQTT.cpp -lpaho-mqttpp3 -lpaho-mqtt3a -lpaho-mqtt3as -->
+
 ### Clone repo
 > - cd ~/
 > - git clone https://github.com/Qengineering/Face-Recognition-Raspberry-Pi-64-bits
