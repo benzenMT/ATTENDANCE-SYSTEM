@@ -1,0 +1,60 @@
+.attendance{
+    display: flex;
+}
+.attendance_form_text{
+    position: absolute;
+    bottom: 40px;
+    text-align: center;
+    padding: 0px 50px;
+    color: rgb(16, 105, 146);
+    font-style: italic;
+}
+.attendance_form{
+    flex: 1;
+    text-align: center;
+    background: url("https://blog.cdn.cmarix.com/blog/wp-content/uploads/2022/05/Attendance-Management-System.png");
+    background-repeat: no-repeat;
+    background-size: 90%;
+    background-position: -10%;
+    background-position-y: bottom;
+}
+
+h3.attendance_form_name {
+    font-size: 30px;
+    font-style: italic;
+    padding: 70px 0px;
+    color: #4e76ca;
+}
+.attendance_form input{
+    outline: none;
+    font-size: 20px;
+    color: #4e76ca;
+    padding: 5px;
+    width: 50%;
+    border: 2px solid #4e76ca;
+    margin: 0px 20px;
+    font-style: italic;
+
+}
+.attendance_form_input{
+    color: #4e76ca;
+        font-weight: 600;
+        font-style: italic;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+}
+.attendance_form_send{
+    border: 2px solid #4e76ca;
+    width: 70px;
+    padding: 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all ease 0.2s;
+}
+.attendance_form_send:hover{
+    background-color: #4e76ca;
+    color: #ddd;
+    transition: all ease 0.2s;
+}

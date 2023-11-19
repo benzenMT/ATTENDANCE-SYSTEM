@@ -1,0 +1,71 @@
+.manager{
+    display: flex;
+    height: 100%;
+    overflow: auto;
+}
+
+.manager_user{
+    flex: 3;
+}
+.manager_list{
+    flex: 1;
+    box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
+    background: #ddd;
+}
+.manager_list_name{
+    background: #145e94;
+    text-align: center;
+    padding: 5px 0px;
+    color: #ddd;
+    font-size: 23px;
+    overflow: auto;
+}
+
+.manager_user{
+    display: flex;
+    flex-direction: column;
+}
+.manager_user_input{
+
+    position: relative;
+    left: 20%;
+}
+.manager_user_input i {
+    font-size: 30px;
+    color: #145e94;
+    padding:0px 10px;
+    cursor: pointer;
+}
+.manager_user_input i:hover{
+    font-size: 32px;
+    transition: all ease 0.2s;
+}
+.manager_user_input input{
+    width: 50%;
+    padding: 10px 10px;
+    outline: none;
+    border: 2px solid #145e94;
+    font-size: 20px;
+    color: #145e94;
+    
+}
+.manager_user_img{
+    text-align: center;
+}
+.manager_user_time{
+    font-size: 20px;
+    color: #145e94;
+    font-weight: 700;
+    margin-left: 100px;
+    padding: 50px;
+}
+.manager_user_time i{
+    padding: 0px 10px;
+}
+.manager_user_box_search{
+    position: absolute;
+    left: 50px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    width: 50%;
+    background: #dfd8d8;
+}

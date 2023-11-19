@@ -1,0 +1,112 @@
+.user_item {
+    align-items: center;
+    display: flex;
+    border-radius: 5px;
+    padding: 2px;
+    margin: 2px 2px;
+    background: #ddd;
+
+}
+
+.user_content {
+    width: 60%;
+}
+
+.user_item i {
+    color: rgb(44, 115, 214);
+    font-size: 22px;
+}
+
+
+
+.user_item img {
+    width: 60px;
+    /* height: 60px; */
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.modal_user{
+    width: 500px;
+    position: relative;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+.modal_user_date{
+    color: #ddd;
+    background: #145e94;
+    font-size: 25px;
+    padding: 5px 0px;
+    text-align: center;
+}
+.modal_user_infor{
+    display: flex;
+    padding: 10px;
+}
+.modal_user_infor_img{
+
+display: flex;
+align-items: center;
+}
+.icon_close_modal{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 25px;
+    transition: all ease 0.1s;
+}
+.icon_close_modal:hover{
+    transition: all ease 0.1s;
+    font-size: 30px;
+}
+.modal_user_infor_img img{
+    width: 150px;
+    box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
+
+    /* height: 150px; */
+}
+.modal_user_infor_content{
+    flex: 1;
+}
+.modal_user_infor_content span {
+    padding: 10px;
+    color: #145e94;
+    font-weight: 600;
+    font-size: 25px;
+}
+.modal_user_infor_content_btn{
+    display: flex;
+    color: #145e94;
+    font-size: 30px;
+    justify-content: space-around;
+    padding: 20px 0px;
+    cursor: pointer;
+}
+.modal_user_footer{
+    background: #145e94;
+    color: #ddd;
+    font-size: 23px;
+    padding: 10px 0px;
+    justify-content: center;
+    text-align: center;
+}
+
+table{
+border: 3px solid #145e94;
+width: 100%;
+text-align: center;
+margin: 0px 5px;
+padding: 0px 20px;
+font-size: 22px;
+color: #145e94;
+font-weight: 600;
+}
+tr{
+    border: 1px solid red;
+}
+th{
+    border-bottom: 2px solid #145e94;
+    width: 50%;
+    padding: 0px 5px;
+}

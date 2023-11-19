@@ -1,0 +1,67 @@
+.register {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 10px;
+    font-size: 18px;
+    background-color: #63aeec;
+    color: #ddd;
+    cursor: pointer;
+    border-radius: 10px;
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    transition: all ease 0.2s;
+}
+
+.register:hover {
+    background-color: #005eaa;
+    transition: all ease 0.2s;
+}
+
+.modal_text_header{
+    color: #333 !important;
+}
+
+.modal_register{
+    width: 300px;
+}
+.modal_register input{
+    width: 90%;
+    padding: 8px;
+    outline: none;
+    font-size: 18px;
+    border: 1px solid #005eaa;
+   
+}
+.modal_register h3{
+    font-size: 30px;
+    color: #005eaa;
+}
+.modal_register h4 {
+    padding: 10px 0px;
+    color: #005eaa;
+
+}
+.icon_eyes{
+    position: absolute;
+    top:  65% ;
+    right: 5%;
+    color: #005eaa;
+    cursor: pointer;
+}
+.btn_register{
+    padding: 10px;
+    margin-top: 10px;
+    width: 80px;
+    text-align: center;
+    border: 1px solid #005eaa;
+    border-radius: 5px;
+    color: #005eaa;
+    background: #ddd;
+    transition: all ease-in 0.2s;
+}
+.btn_register:hover{
+    color: #ddd;
+    background: #005eaa;   
+    transition:  all ease-in 0.2s;
+    cursor: pointer;
+}

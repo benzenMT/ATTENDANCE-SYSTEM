@@ -1,0 +1,206 @@
+.webcam {
+    display: flex;
+    /* justify-content: space-around; */
+    align-items: center;
+    height: 100%;
+}
+
+.webcam_left {
+    text-align: center;
+    flex: 1;
+    /* border: 5px solid transparent; */
+    /* border-image: linear-gradient(90deg, #000 50%, #fff 50%, #000 50%); */
+    /* border-image-slice: 1; */
+    border: 12px solid transparent;
+    border-image: linear-gradient(90deg, #0a3871 40%, transparent 40%, transparent 60%, #0a3871 60%  ) 200;
+    /* border-image: linear-gradient(180deg, #000 40%, transparent 40%, transparent 60%, #000 60%) 100; */
+    padding: 15px 0px 0px 0px;
+    margin: 0px 100px;
+    position: relative;
+}
+.webcam_left_img{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    right: 0;
+    z-index: 0;
+    width: 100%;
+}
+.icon_camera {
+    font-size: 30px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all ease 0.1s;
+}
+
+.icon_camera:hover {
+    font-size: 38px;
+    transition: all ease 0.1s;
+    color: #0a3871;
+}
+
+.webcam_cam {
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+    background-color: rgb(47, 38, 38);
+    z-index: 2;
+    position: relative;
+
+
+}
+
+.webcam_right{
+    flex: 1;
+    height: 100%;
+    background-image: linear-gradient(to top, #1254a0 0%, #537895 100%);
+    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+    color: #dddddd;
+    padding: 10px;
+}
+.webcam_right_content{
+    display: flex;
+    padding: 30px 5px;
+}
+.webcam_right_content div{
+    flex: 1;
+}
+.webcam_right_content div img{
+    width: 100%;
+    
+    /* border-image: linear-gradient(90deg, #fcfcfc 40%, transparent 40%, transparent 60%, #ffffff 60%) 200; */
+}
+.webcam_right_content_cam{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    width: 300px;
+    height: 300px;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 10px solid #0a3871;
+    
+}
+.icon_image{
+    color: #0a3871;
+    font-size: 150px;
+}
+.webcam_right_content_input{
+    padding: 0px 10px;
+}
+
+.webcam_right_content_input input{
+    width: 100%;
+    padding: 5px;
+    font-size: 18px;
+    outline: none;
+
+}
+.webcam_right_content_btn {
+    display: flex;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.webcam_right_content_btn div {
+    border: 1px solid;
+    width: 50px;
+    margin: 0px 20px;
+    text-align: center;
+    padding: 5px 0px;
+}
+.webcam_left_rec{
+    position: absolute;
+    top: -10%;
+}
+.webcam_right_footer{
+    font-style: italic;
+    padding: 5px 50px;
+    position: absolute;
+    bottom: 40px;
+    border-top: 5px solid #ddd;
+    
+}
+.webcam_right_footer h4{
+    font-weight: 300;
+}
+
+.btn_fixdata:hover{
+    background-color: #ddd;
+    color: #0a3871;
+}
+.btn_sendata:hover{
+    background-color: #ddd;
+        color: #0a3871;
+}
+.slide-in {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    /* Thay đổi giá trị này để điều chỉnh khoảng cách ban đầu */
+    width: 45%;
+    height: 100%;
+    background-color: white;
+    transition: right 0.5s;
+    z-index: 999;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.slide-in.show {
+    right: 0;
+}
+.btn_displaybox{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    border-bottom: 2px solid #ddd;
+    color: #ddd;
+    font-weight: 500;
+    cursor: pointer;
+}
+.btn_displaybox:hover{
+    border-bottom: 5px solid #ddd;
+}
+.box_content_header_input{
+    position: absolute;
+    top: 14px;
+    right: 20px;
+}
+.box_content_header_input input{
+    border: 2px solid #0a3871;
+    outline: none;
+    padding: 5px;
+    font-size: 18px;
+}
+.box_content_header_input i {
+    font-size: 20px;
+    color: #ddd;
+    padding: 0px 10px;
+}
+.box_content_header{
+    background: #0a3871;
+    margin-bottom: 10px;
+}
+.box_content_body{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+}
+
+.box_search {
+    background: #ddd;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    margin-left: 44px;
+    margin-right: 2px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+.box_search_close {
+    position: absolute;
+    /* top: 0; */
+    right: 0px;
+    bottom: 40px;
+    cursor: pointer;
+}
+.box_search_close i {
+    color: #0a3871;
+}

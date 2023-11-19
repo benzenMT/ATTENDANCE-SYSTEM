@@ -1,0 +1,87 @@
+.modal_adduser{
+    display: flex;
+}
+.modal_adduser_img{
+    flex: 1;
+}
+.modal_adduser_img img{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid rgb(16, 122, 198);
+}
+.modal_adduser_content{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+}
+.modal_adduser_content input{
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #005eaa; 
+    outline: none;
+}
+.modal_adduser_content h4{
+    color: #005eaa;
+}
+.Adduser {
+    top: 10px;
+    margin-left: 20px;
+    width: 150px;
+    height: 35px;
+    position: absolute;
+    padding: 5px;
+    background: #3f9ace;
+    text-align: center;
+    color: #ddd;
+    font-size: 18px;
+    font-weight: 400;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all ease-in 0.2s;
+}
+
+.Adduser:hover {
+    background-color: #0081cc;
+    width: 180px;
+    height: 38px;
+    transition: all ease-in 0.2s;
+}
+.modal_adduser_content_fix{
+    display: flex;
+    justify-content: space-between;
+}
+.modal_adduser_content_fix div {
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 70px;
+    margin-top: 8px ;
+    background-color: #1689cc;
+    text-align: center;
+    color: #ddd;
+    transition: all ease 0.2s;
+}
+.btn_fix:hover{
+    background-color: #064468;
+    transition: all ease 0.2s;
+}
+.btn_send:hover {
+    background-color: #064468;
+    transition: all ease 0.2s;
+}
+
+.icon_camera_upload{
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 50px;
+    color: #005eaa;
+    top: 45%;
+    left: 19%;
+}
