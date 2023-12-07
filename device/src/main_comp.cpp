@@ -15,6 +15,8 @@
 #include <string>
 #include "mqtt/async_client.h"
 #include </usr/include/arm-linux-gnueabihf/curl/curl.h>
+#include <cstring>
+#include <cstdlib>
 // #include <wiringPi.h>
 #include <time.h>
 #include <pthread.h>
@@ -27,7 +29,8 @@ const float MinFaceThreshold = 0.55;
 const double MaxAngle        = 60.0;
 
 char* person_name            = NULL;
-bool is_unlocked             = false;
+bool is_newImg             = false;
+bool is_timekeep             = false;
 
 int detectCount = 0;
 
@@ -38,17 +41,19 @@ const char* cam_index       = "/dev/video1";
 const int   RetinaWidth      = 320;
 const int   RetinaHeight     = 240;
 
-const char* detect_param_path = "./models/retina/mnet.25-opt.param";
-const char* detect_bin_path = "./models/retina/mnet.25-opt.bin";
+const char* detect_param_path = "/home/pi/work_space/Benzen_Project_230_AI/models/retina/mnet.25-opt.param";
+const char* detect_bin_path = "/home/pi/work_space/Benzen_Project_230_AI/models/retina/mnet.25-opt.bin";
 
-const char* extract_param_path = "./models/mobilefacenet/mobilefacenet-opt.param";
-const char* extract_bin_path = "./models/mobilefacenet/mobilefacenet-opt.bin";
+const char* extract_param_path = "/home/pi/work_space/Benzen_Project_230_AI/models/mobilefacenet/mobilefacenet-opt.param";
+const char* extract_bin_path = "/home/pi/work_space/Benzen_Project_230_AI/models/mobilefacenet/mobilefacenet-opt.bin";
 
-const char* face_cut_model = "./models/haarcascade_frontalface_alt.xml";
+const char* face_cut_model = "/home/pi/work_space/Benzen_Project_230_AI/models/haarcascade_frontalface_alt.xml";
+
+string pattern_jpg = "/home/pi/work_space/Benzen_Project_230_AI/img/*.jpg";
+string path_img_raw = "/home/pi/work_space/Benzen_Project_230_AI/img_raw/";
+string path_img_clean = "/home/pi/work_space/Benzen_Project_230_AI/img/";
 
 const int   feature_dim      = 128;
-
-string pattern_jpg = "./img/*.jpg";
 
 float ScaleX, ScaleY;
 vector<cv::String> NameFaces;
@@ -61,10 +66,6 @@ using namespace std::chrono;
 //----------------------------------------------------------------------------------------
 cv::VideoCapture cap_truedeep(cam_index);
 
-//////////////////////////////////
-bool checkPerson=true;
-//////////////////////////////////
-
 inline float CosineDistance(const cv::Mat &v1, const cv::Mat &v2)
 {
     // std::cout << v1 << "\n ===========  " << v2 << endl;
@@ -75,50 +76,24 @@ inline float CosineDistance(const cv::Mat &v1, const cv::Mat &v2)
 }
 
 
-void rescale_original(std::vector<FaceObject>& Faces){
-    for (auto &face:Faces){
+void rescale_original(std::vector<FaceObject>& Faces)
+{
+    for (auto &face:Faces)
+    {
         face.rect.x *= ScaleX;
         face.rect.y *= ScaleY;
         face.rect.width *= ScaleX;
         face.rect.height *= ScaleY;
-        for (auto &lmk: face.landmark){
+        for (auto &lmk: face.landmark)
+        {
             lmk.x *= ScaleX;
             lmk.y *= ScaleY;
         }
     }
 }
-void face_cut(string name_img)
+
+void do_infer()
 {
-    string path = "./img_raw/" + name_img + ".jpg";
-    cv::Mat image = cv::imread(path.c_str()); // Đường dẫn đến ảnh của bạn
-
-    if (image.empty()) {
-        std::cout << "not load image raw" << std::endl;
-        return -1;
-    }
-
-    cv::CascadeClassifier face_cascade;
-    face_cascade.load(face_cut_model); // Đường dẫn đến tệp XML của bộ phân loại khuôn mặt
-
-    if (face_cascade.empty()) {
-        std::cout << "not load model" << std::endl;
-        return -1;
-    }
-
-    std::vector<cv::Rect> faces;
-    face_cascade.detectMultiScale(image, faces, 1.1, 3, 0, cv::Size(30, 30));
-
-    for (const cv::Rect& face : faces) {
-        cv::Mat face_roi = image(face); // Cắt ảnh khuôn mặt
-
-        // Thay đổi kích thước ảnh khuôn mặt về 112x112
-        cv::resize(face_roi, face_roi, cv::Size(112, 112));
-        // Lưu ảnh khuôn mặt vào file
-        string path_save = "./img/" + name_img + ".jpg";
-        cv::imwrite(path_save.c_str(), face_roi);
-    }
-}
-void do_infer(){
     int   n, count=1;
     size_t i;
     cv::Mat frame;
@@ -133,13 +108,16 @@ void do_infer(){
     TArcFace ArcFace(extract_bin_path, extract_param_path, feature_dim);
     TRetina Rtn(RetinaWidth, RetinaHeight, detect_bin_path, detect_param_path, false);     //no Vulkan support on a RPi
 
+    reload:
     //loading the faces
 	cv::glob(pattern_jpg, NameFaces);
     FaceCnt=NameFaces.size();
-	if(FaceCnt==0) {
+	if(FaceCnt==0)
+    {
 		std::cout << "No image files[jpg] in database" << endl;
 	}
-	else{
+	else
+    {
         std::cout << "Found "<< FaceCnt << " pictures in database." << endl;
         for(i=0; i<FaceCnt; i++){
             //convert to landmark vector and store into fc
@@ -161,19 +139,24 @@ void do_infer(){
 
     // Start inference
 
-    if (!cap_truedeep.isOpened()) {
+    if (!cap_truedeep.isOpened())
+    {
         cerr << "ERROR: Unable to open the camera" << endl;
         return;
     }
 
     while(1){
+        if(is_newImg == true)
+        {
+            is_newImg = false;
+            goto reload;
+        }
         cap_truedeep >> frame;
-        cv::imshow("RPi 64 OS - 1,95 GHz - 2 Mb RAM", frame);
-        if (frame.empty()) {
+        if (frame.empty())
+        {
             cerr << "End of movie" << endl;
             break;
         }
-        
         ScaleX = ((float) frame.cols) / RetinaWidth;
         ScaleY = ((float) frame.rows) / RetinaHeight;
 
@@ -186,7 +169,8 @@ void do_infer(){
         Rtn.detect_retinaface(result_cnn,Faces);
         rescale_original(Faces);
 
-        for(i=0;i<Faces.size();i++){
+        for(i=0;i<Faces.size();i++)
+        {
             Faces[i].NameIndex = -2;    //-2 -> too tiny (may be negative to signal the drawing)
             Faces[i].Color     =  2;
             Faces[i].NameProb  = 0.0;
@@ -195,9 +179,12 @@ void do_infer(){
         //run through the faces only when you got one face.
         //more faces (if large enough) are not a problem
         //in this app with an input image of 324x240, they become too tiny
-        if(Faces.size() > 0){
-            for(i=0;i<Faces.size();i++){
-                if(Faces[i].FaceProb>MinFaceThreshold){
+        if(Faces.size() > 0)
+        {
+            for(i=0;i<Faces.size();i++)
+            {
+                if(Faces[i].FaceProb>MinFaceThreshold)
+                {
                     //get centre aligned image and angle
                     cv::Mat aligned = Warp.Process(frame, Faces[i]);
                     // cv::imwrite("align.jpg", aligned);
@@ -207,7 +194,6 @@ void do_infer(){
                     if (Warp.Angle > MaxAngle){
                         Faces[i].NameIndex = -1;    //a stranger
                         Faces[i].Color     =  1;
-                        is_unlocked = false;
                         free(person_name);
                         person_name = NULL;
                         continue;
@@ -228,6 +214,7 @@ void do_infer(){
                         score_.clear();
                         if(Faces[i].NameProb >= MinFaceThreshold){
                             person_name = strdup(NameFaces[Faces[i].NameIndex].c_str());
+                            is_timekeep = true;
                             std::cout << "reg name: " <<person_name<< endl;
                         }
                         else{
@@ -242,7 +229,8 @@ void do_infer(){
                 }
             }
         }
-        else{
+        else
+        {
             free(person_name);
             person_name = NULL;
         }
@@ -251,20 +239,67 @@ void do_infer(){
         std::cout << "FPS: " << 1000.0/(duration.count()/1000) << endl;
     }
 }
+
+std::string file_name_extract(std::string input_string)
+{
+    std::string startPattern = "%2F";
+    std::string endPattern = "?";
+    std::size_t startPos = input_string.find(startPattern);
+    std::size_t endPos = input_string.find(endPattern, startPos + startPattern.length());
+    std::string output_file_name =  input_string.substr(startPos + startPattern.length(), 
+                                                        endPos - (startPos + startPattern.length()));
+    return output_file_name;
+}
+
+void face_cut(string name_img)
+{
+    cv::Mat image = cv::imread(string(path_img_raw + name_img).c_str()); // Đường dẫn đến ảnh của bạn
+
+    if (image.empty()) {
+        std::cout << "not load image raw" << std::endl;
+        return -1;
+    }
+
+    cv::CascadeClassifier face_cascade;
+    face_cascade.load(face_cut_model); // Đường dẫn đến tệp XML của bộ phân loại khuôn mặt
+
+    if (face_cascade.empty())
+    {
+        std::cout << "not load model" << std::endl;
+        return -1;
+    }
+
+    std::vector<cv::Rect> faces;
+    face_cascade.detectMultiScale(image, faces, 1.1, 3, 0, cv::Size(30, 30));
+
+    for (const cv::Rect& face : faces)
+    {
+        cv::Mat face_roi = image(face); // Cắt ảnh khuôn mặt
+
+        // Thay đổi kích thước ảnh khuôn mặt về 112x112
+        cv::resize(face_roi, face_roi, cv::Size(112, 112));
+        // Lưu ảnh khuôn mặt vào file
+        cv::imwrite(string(path_img_clean + name_img).c_str(), face_roi);
+    }
+}
+
 // Callback function to write data to a file
-size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp)
+{
     size_t totalSize = size * nmemb;
     std::ofstream* file = static_cast<std::ofstream*>(userp);
     file->write(static_cast<char*>(contents), totalSize);
     return totalSize;
 }
 
-void download_image(string url, string output_file_name)
+bool download_image(string url)
 {
     CURL* curl = curl_easy_init();
+    std::string output_file_name =  file_name_extract(url);
 
-    if (curl) {
-        string output_file_path = "./img_raw/" + output_file_name + ".jpg";
+    if (curl)
+    {
+        string output_file_path = path_img_raw + output_file_name;
         // Open a file for writing the downloaded image
         std::ofstream outputFile(output_file_path.c_str(), std::ios::binary);
 
@@ -282,38 +317,143 @@ void download_image(string url, string output_file_name)
         outputFile.close();
         curl_easy_cleanup(curl);
 
-        if (res == CURLE_OK) {
+        if (res == CURLE_OK)
+        {
             std::cout << "Download successful. Image saved as " << output_file_name << std::endl;
-        } else {
+            return true;
+        } 
+        else 
+        {
             std::cerr << "Download failed: " << curl_easy_strerror(res) << std::endl;
+            return false;
         }
     }
 }
-void mqtt_prog(){
-    const std::string server_address = "tcp://broker.example.com:1883"; // Thay b?ng d?a ch? broker MQTT c?a b?n
-    const std::string client_id = "paho_cpp_publish_example";
-    const std::string topic = "test/topic"; // Thay b?ng ch? d? (topic) MQTT b?n mu?n xu?t b?n d?n
 
-    mqtt::async_client client(server_address, client_id);
+class SubCallback : public virtual mqtt::callback {
+    public:
+        std::string message;
+        std::string topics;
+        bool status = false;
 
-    mqtt::connect_options connOpts;
-    connOpts.set_keep_alive_interval(20);
-    connOpts.set_clean_session(true);
+        void message_arrived(mqtt::const_message_ptr msg) override {
+            std::cout << "Message Arrived! Topic: " << msg->get_topic() << ", Message: " << msg->to_string() << std::endl;
+            message = msg->to_string();
+            topics = msg->get_topic();
+            status = true;
+        }
+        bool get_msg(std::string& topic, std::string& payload)
+        {
+            if(status)
+            {
+                topic = topics;
+                payload = message;
+                status = false;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
 
-    try {
-        client.connect(connOpts)->wait(); // K?t n?i d?n broker MQTT
+        }
+};
 
-        std::string payload = "Hello, MQTT!"; // N?i dung c?a th�ng di?p c?n xu?t b?n
+long long get_milis()
+{
+    auto currentTimePoint = std::chrono::system_clock::now();
 
-        mqtt::message_ptr pubmsg = mqtt::make_message(topic, payload);
-        client.publish(pubmsg)->wait(); // Xu?t b?n th�ng di?p d?n ch? d? MQTT
+    // Convert the time point to milliseconds
+    auto currentTimeMs = std::chrono::time_point_cast<std::chrono::milliseconds>(currentTimePoint);
 
-        client.disconnect()->wait(); // Ng?t k?t n?i sau khi ho�n th�nh xu?t b?n
+    // Extract the time since epoch in milliseconds
+    auto timeSinceEpochMs = currentTimeMs.time_since_epoch();
 
-        std::cout << "Message published successfully." << std::endl;
-    } catch (const mqtt::exception& exc) {
-        std::cerr << "Error: " << exc.what() << std::endl;
-        return 1;
+    // Convert the time duration to milliseconds
+    long long currentTimeMsValue = timeSinceEpochMs.count();
+    return currentTimeMsValue;
+}
+void mqtt_prog()
+{
+    const std::string server_address = "tcp://test.mosquitto.org:1883"; // broker address MQTT
+    const std::string client_id = "device_time_keeping";
+    const std::vector<std::string> pub_topics = {"timekeep/new_employee_res", 
+                                                "timekeep/time_keeping_res", 
+                                                "timekeep/time_keeping"}; // Thay b?ng ch? d? (topic) MQTT b?n mu?n xu?t b?n d?n
+    const std::vector<std::string> sub_topics = {"timekeep/new_employee", 
+                                                "timekeep/time_keeping_res_host"}; // Thay b?ng ch? d? (topic) MQTT b?n mu?n xu?t b?n d?n
+    while(true)
+    {
+        int status = system("ping -c 1 8.8.8.8");
+        if(WEXITSTATUS(status) == 0)
+        {
+            cout<<"internet connected"<<endl;
+            mqtt::async_client client(server_address, client_id);
+
+            mqtt::connect_options connOpts;
+            connOpts.set_keep_alive_interval(20);
+            connOpts.set_clean_session(true);
+
+            SubCallback callback;
+            client.set_callback(callback);
+
+            long long timer_sleep = 0;
+
+            try
+            {   
+                
+                client.connect(connOpts)->wait(); // K?t n?i d?n broker MQTT
+                for(const std::string& sub_topic : sub_topics)
+                {
+                    client.subscribe(sub_topic, 1);
+                }
+                while(true)
+                {
+                    std::string topic;
+                    std::string msg;
+                    if(callback.get_msg(topic, msg))
+                    {
+                        if(strstr(sub_topics[0].c_str(), topic.c_str()) != NULL)
+                        {
+                            if(download_image(msg))
+                            {
+                                std::string output_file_name =  file_name_extract(msg); //make contens msg
+                                face_cut(output_file_name);
+                                is_newImg = true;
+                                mqtt::message_ptr pubmsg = mqtt::make_message(pub_topics[0], output_file_name); //commit msg to buffer
+                                client.publish(pubmsg)->wait(); // push the msg to MQTT
+                            }
+                        }
+                        if(strstr(sub_topics[1].c_str(), topic.c_str()) != NULL)
+                        {
+                            is_timekeep = false;
+                            std::string payload = "time_keeping_res: " + msg; //make contens msg
+                            mqtt::message_ptr pubmsg = mqtt::make_message(pub_topics[1], payload); //commit msg to buffer
+                            client.publish(pubmsg)->wait(); // push the msg to MQTT
+                        }
+                    }
+                    if(is_timekeep == true && person_name != NULL)
+                    {
+                        if(get_milis() - timer_sleep > 3000)
+                        {
+                            std::string payload = "timekeep: " + string(person_name); //make contens msg
+                            mqtt::message_ptr pubmsg = mqtt::make_message(pub_topics[2], payload); //commit msg to buffer
+                            client.publish(pubmsg)->wait(); // push the msg to MQTT
+                            timer_sleep = get_milis(); 
+                        }
+                    }
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                }
+
+                client.disconnect()->wait(); // disconnect after exited function
+            }
+            catch (const mqtt::exception& exc)
+            {
+                std::cerr << "Error: " << exc.what() << std::endl;
+                return 1;
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }
 //----------------------------------------------------------------------------------------
@@ -322,8 +462,8 @@ void mqtt_prog(){
 
 int main(int argc, char **argv)
 {
-    std::thread threadMQTT(mqtt_prog);
     std::thread threadFaceReg(do_infer);
+    std::thread threadMQTT(mqtt_prog);
     threadMQTT.join();
     threadFaceReg.join();
     return 0;
